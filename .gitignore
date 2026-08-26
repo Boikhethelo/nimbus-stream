@@ -38,4 +38,11 @@ build/
 ### Mac OS ###
 .DS_Store
 
-.stream_cache.db
+stream_cache.db
+credentials.json
+stream_cache.db-shm
+stream_cache.db-wal
+.env
+*.pem
+remain
+tokens/
