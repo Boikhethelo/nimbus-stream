@@ -25,23 +25,23 @@ public class StorageFile {
         this.thumbnailLink = thumbnailLink;
     }
 
-    public String id(){
+    public String getId(){
         return id;
     }
 
-    public String name(){
+    public String getName(){
         return name;
     }
 
-    public long size(){
+    public long getSize(){
         return size;
     }
 
-    public String mimeType(){
+    public String getMimeType(){
         return mimeType;
     }
 
-    public String thumbnailLink(){
+    public String getThumbnailLink(){
         return thumbnailLink;
     }
 }

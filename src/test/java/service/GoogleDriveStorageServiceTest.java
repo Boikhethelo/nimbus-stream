@@ -45,12 +45,12 @@ class GoogleDriveStorageServiceTest {
     }
 
     @Test
-    void fileSizeReturnsSizeFromDriveMetadata() throws IOException {
+    void getFileSizeReturnsSizeFromDriveMetadata() throws IOException {
         wireGetChain();
         File driveFile = new File().setSize(500000L);
         when(getRequest.execute()).thenReturn(driveFile);
 
-        long result = storageService.fileSize("abc123");
+        long result = storageService.getFileSize("abc123");
 
         assertThat(result).isEqualTo(500000L);
         verify(files).get("abc123");
@@ -58,11 +58,11 @@ class GoogleDriveStorageServiceTest {
     }
 
     @Test
-    void fileSizeWrapsIOExceptionAsStorageException() throws IOException {
+    void getFileSizeWrapsIOExceptionAsStorageException() throws IOException {
         wireGetChain();
         when(getRequest.execute()).thenThrow(new IOException("network error"));
 
-        assertThatThrownBy(() -> storageService.fileSize("abc123"))
+        assertThatThrownBy(() -> storageService.getFileSize("abc123"))
                 .isInstanceOf(StorageException.class)
                 .hasMessageContaining("abc123");
     }
@@ -86,7 +86,7 @@ class GoogleDriveStorageServiceTest {
 
         assertThat(result).hasSize(2);
         assertThat(result)
-                .extracting(StorageFile::id, StorageFile::name, StorageFile::size, StorageFile::mimeType)
+                .extracting(StorageFile::getId, StorageFile::getName, StorageFile::getSize, StorageFile::getMimeType)
                 .containsExactlyInAnyOrder(
                         tuple("id1", "movie1.mp4", 1000L, "video/mp4"),
                         tuple("id2", "movie2.mp4", 2000L, "video/mp4")
@@ -122,7 +122,7 @@ class GoogleDriveStorageServiceTest {
 
         List<StorageFile> result = storageService.listVideoFiles("folder123");
 
-        assertThat(result.get(0).size()).isEqualTo(0L);
+        assertThat(result.get(0).getSize()).isEqualTo(0L);
     }
 
     @Test

@@ -43,7 +43,7 @@ public class S3StorageService implements StorageService {
     }
 
     @Override
-    public long fileSize(String fileId){
+    public long getFileSize(String fileId){
         //meta data request
         try{
             HeadObjectResponse head = s3Client.headObject(HeadObjectRequest.builder().bucket(bucketName).key(fileId).build());
@@ -55,7 +55,7 @@ public class S3StorageService implements StorageService {
     }
 
     @Override
-    public InputStream videoStream(String fileId){
+    public InputStream getVideoStream(String fileId){
         //gets raw input stream for streaming
         try{
             ResponseInputStream<GetObjectResponse> response = s3Client.getObject(GetObjectRequest.builder().bucket(bucketName).key(fileId).build());
@@ -94,7 +94,7 @@ public class S3StorageService implements StorageService {
      * free-tier EC2 instance.
      */
 
-    public URL presignedStreamUrl(String fileId, Duration expiry){
+    public URL getPresignedStreamUrl(String fileId, Duration expiry){
         //generates a temporary signed URL so a client's video player can pull bytes directly from S3, bypassing your EC2 instance entirely. Smart for free-tier cost control.
         GetObjectRequest getRequest = GetObjectRequest.builder().bucket(bucketName).key(fileId).build();
         GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder().signatureDuration(expiry).getObjectRequest(getRequest).build();

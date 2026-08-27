@@ -11,10 +11,10 @@ public class StorageFileTest {
 
     @Test
     void gettersReturnValuesPassedToConstructor() {
-        assertEquals("test-01", testFile.id());
-        assertEquals("Test File", testFile.name());
-        assertEquals(200099, testFile.size());
-        assertEquals("video", testFile.mimeType());
-        assertEquals("http://test.link", testFile.thumbnailLink());
+        assertEquals("test-01", testFile.getId());
+        assertEquals("Test File", testFile.getName());
+        assertEquals(200099, testFile.getSize());
+        assertEquals("video", testFile.getMimeType());
+        assertEquals("http://test.link", testFile.getThumbnailLink());
     }
 }

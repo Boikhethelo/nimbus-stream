@@ -53,13 +53,13 @@ class S3StorageServiceTest {
     }
 
     @Test
-    void fileSizeReturnsSizeFromS3Object() {
+    void getFileSizeReturnsSizeFromS3Object() {
         HeadObjectResponse mockResponse = HeadObjectResponse.builder()
                 .contentLength(123456L)
                 .build();
         when(s3Client.headObject(any(HeadObjectRequest.class))).thenReturn(mockResponse);
 
-        long result = s3StorageService.fileSize("videos/movie.mp4");
+        long result = s3StorageService.getFileSize("videos/movie.mp4");
 
         assertThat(result).isEqualTo(123456L);
 
@@ -69,17 +69,17 @@ class S3StorageServiceTest {
     }
 
     @Test
-    void fileSizeWrapsS3ExceptionAsStorageException() {
+    void getFileSizeWrapsS3ExceptionAsStorageException() {
         when(s3Client.headObject(any(HeadObjectRequest.class)))
                 .thenThrow(S3Exception.builder().message("not found").build());
 
-        assertThatThrownBy(() -> s3StorageService.fileSize("missing.mp4"))
+        assertThatThrownBy(() -> s3StorageService.getFileSize("missing.mp4"))
                 .isInstanceOf(StorageException.class)
                 .hasMessageContaining("missing.mp4");
     }
 
     @Test
-    void videoStreamReturnsInputStreamFromS3() {
+    void getVideoStreamReturnsInputStreamFromS3() {
         InputStream rawStream = new ByteArrayInputStream("fake video bytes".getBytes());
         ResponseInputStream<GetObjectResponse> responseStream =
                 new ResponseInputStream<>(GetObjectResponse.builder().build(),
@@ -87,7 +87,7 @@ class S3StorageServiceTest {
 
         when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(responseStream);
 
-        InputStream result = s3StorageService.videoStream("videos/movie.mp4");
+        InputStream result = s3StorageService.getVideoStream("videos/movie.mp4");
 
         assertThat(result).isNotNull();
     }
@@ -111,7 +111,7 @@ class S3StorageServiceTest {
 
         assertThat(result).hasSize(2); // placeholder excluded
         assertThat(result)
-                .extracting(StorageFile::id, StorageFile::size, StorageFile::mimeType)
+                .extracting(StorageFile::getId, StorageFile::getSize, StorageFile::getMimeType)
                 .containsExactlyInAnyOrder(
                         tuple("videos/a.mp4", 1000L, "video/mp4"),
                         tuple("videos/b.mp4", 2000L, "video/mp4")
@@ -128,7 +128,7 @@ class S3StorageServiceTest {
     }
 
     @Test
-    void presignedStreamUrlDelegatesToPresignerAndReturnsUrl() throws MalformedURLException {
+    void getPresignedStreamUrlDelegatesToPresignerAndReturnsUrl() throws MalformedURLException {
         URL expectedUrl = new URL("https://test-bucket.s3.amazonaws.com/videos/movie.mp4?X-Amz-Signature=abc");
 
         PresignedGetObjectRequest presignedRequest = mock(PresignedGetObjectRequest.class);
@@ -136,7 +136,7 @@ class S3StorageServiceTest {
         when(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
                 .thenReturn(presignedRequest);
 
-        URL result = s3StorageService.presignedStreamUrl("videos/movie.mp4", Duration.ofMinutes(15));
+        URL result = s3StorageService.getPresignedStreamUrl("videos/movie.mp4", Duration.ofMinutes(15));
 
         assertThat(result).isEqualTo(expectedUrl);
 

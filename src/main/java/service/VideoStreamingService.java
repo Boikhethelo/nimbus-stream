@@ -5,8 +5,6 @@ import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.HttpRange;
 import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
-
 @Service
 public class VideoStreamingService implements VideoStreamingServiceInterface {
 
@@ -19,8 +17,8 @@ public class VideoStreamingService implements VideoStreamingServiceInterface {
 
     @Override
     public ResourceRegion buildStreamingRegion(String fileId, HttpRange requestedRange){
-        long fileSize = storageService.fileSize(fileId); // gets file size from storage service
-        InputStreamResource resource  = new InputStreamResource(storageService.videoStream(fileId)); //gets the video stream from storage service
+        long fileSize = storageService.getFileSize(fileId); // gets file size from storage service
+        InputStreamResource resource  = new InputStreamResource(storageService.getVideoStream(fileId)); //gets the video stream from storage service
 
         HttpRange range = requestedRange != null ? requestedRange : HttpRange.createByteRange(0, fileSize - 1 ); //Decides which range to use
 

@@ -21,13 +21,13 @@ public interface StorageService {
      * @param fileId provider-specific identifier for the file (S3 object key, or Drive file ID)
      * @return the size of the file in bytes, as reported by the provider
      */
-    long fileSize(String fileId);
+    long getFileSize(String fileId);
 
     /**
      * @param fileId provider-specific identifier for the file
      * @return a stream of the file's bytes. Caller is responsible for closing it.
      */
-    InputStream videoStream(String fileId);
+    InputStream getVideoStream(String fileId);
 
     /**
      * Lists every video file available under the given container.

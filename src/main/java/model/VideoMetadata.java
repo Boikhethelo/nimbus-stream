@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 public class VideoMetadata {
 
     @Id
-    private String googleFileId; // Using Google's unique file ID as the Primary Key
+    private String fileId; // Cloud-agnostic identifier: S3 object key or Google Drive file ID
     private String title;
     private long fileSize;
     private String mimeType;
@@ -18,8 +18,8 @@ public class VideoMetadata {
     // Default constructor required by JPA
     public VideoMetadata() {}
 
-    public VideoMetadata(String googleFileId, String title, long fileSize, String mimeType, String thumbnailLink) {
-        this.googleFileId = googleFileId;
+    public VideoMetadata(String fileId, String title, long fileSize, String mimeType, String thumbnailLink) {
+        this.fileId = fileId;
         this.title = title;
         this.fileSize = fileSize;
         this.mimeType = mimeType;
@@ -27,8 +27,8 @@ public class VideoMetadata {
     }
 
     // Getters and Setters
-    public String getGoogleFileId() { return googleFileId; }
-    public void setGoogleFileId(String googleFileId) { this.googleFileId = googleFileId; }
+    public String getFileId() { return fileId; }
+    public void setFileId(String fileId) { this.fileId = fileId; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }

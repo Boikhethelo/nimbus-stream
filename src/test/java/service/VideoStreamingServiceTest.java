@@ -32,8 +32,8 @@ class VideoStreamingServiceTest {
     @Test
     void buildStreamingRegionServesFirstChunkWhenNoRangeRequested() {
         long fileSize = 5 * CHUNK_SIZE; // 5MB file
-        when(storageService.fileSize(FILE_ID)).thenReturn(fileSize);
-        when(storageService.videoStream(FILE_ID))
+        when(storageService.getFileSize(FILE_ID)).thenReturn(fileSize);
+        when(storageService.getVideoStream(FILE_ID))
                 .thenReturn(new ByteArrayInputStream(new byte[0])); // content itself isn't read in this test
 
         ResourceRegion region = videoStreamingService.buildStreamingRegion(FILE_ID, null);
@@ -45,8 +45,8 @@ class VideoStreamingServiceTest {
     @Test
     void buildStreamingRegionRespectsRequestedRangeStart() {
         long fileSize = 10 * CHUNK_SIZE;
-        when(storageService.fileSize(FILE_ID)).thenReturn(fileSize);
-        when(storageService.videoStream(FILE_ID))
+        when(storageService.getFileSize(FILE_ID)).thenReturn(fileSize);
+        when(storageService.getVideoStream(FILE_ID))
                 .thenReturn(new ByteArrayInputStream(new byte[0]));
 
         HttpRange requestedRange = HttpRange.createByteRange(2 * CHUNK_SIZE);
@@ -60,8 +60,8 @@ class VideoStreamingServiceTest {
     @Test
     void buildStreamingRegionClampsToRemainingBytesNearEndOfFile() {
         long fileSize = 1500; // small file, less than one full chunk left near the end
-        when(storageService.fileSize(FILE_ID)).thenReturn(fileSize);
-        when(storageService.videoStream(FILE_ID))
+        when(storageService.getFileSize(FILE_ID)).thenReturn(fileSize);
+        when(storageService.getVideoStream(FILE_ID))
                 .thenReturn(new ByteArrayInputStream(new byte[0]));
 
         // Ask for the last 500 bytes of a 1500-byte file
@@ -76,8 +76,8 @@ class VideoStreamingServiceTest {
     @Test
     void buildStreamingRegionHandlesFullFileByteRange() {
         long fileSize = 2000;
-        when(storageService.fileSize(FILE_ID)).thenReturn(fileSize);
-        when(storageService.videoStream(FILE_ID))
+        when(storageService.getFileSize(FILE_ID)).thenReturn(fileSize);
+        when(storageService.getVideoStream(FILE_ID))
                 .thenReturn(new ByteArrayInputStream(new byte[0]));
 
         HttpRange requestedRange = HttpRange.createByteRange(0, fileSize - 1);

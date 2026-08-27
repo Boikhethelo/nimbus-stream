@@ -36,7 +36,7 @@ public class GoogleDriveStorageService implements StorageService {
     }
 
     @Override
-    public long fileSize(String fileId){
+    public long getFileSize(String fileId){
         try{
             return driveClient.files().get(fileId).setFields("size").execute().getSize();
         } catch (IOException e){
@@ -46,7 +46,7 @@ public class GoogleDriveStorageService implements StorageService {
     }
 
     @Override
-    public InputStream videoStream(String fileId){
+    public InputStream getVideoStream(String fileId){
         try{
             return driveClient.files().get(fileId).executeMediaAsInputStream();
 
