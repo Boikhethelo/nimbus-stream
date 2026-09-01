@@ -10,7 +10,11 @@ import java.util.List;
 
 @Repository
 public interface VideoRepository extends JpaRepository<VideoMetadata, String> {
-    ///TODO: Add search methods:
+    /**
+     * Spring Data JPA derived query method.
+     * Spring generates the implementation automatically from the method name at startup
+     */
     List<VideoMetadata> findByTitleContainingIgnoreCase(String title);
+
 
 }

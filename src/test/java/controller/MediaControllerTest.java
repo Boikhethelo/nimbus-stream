@@ -1,5 +1,6 @@
 package controller;
 
+import exception.VideoNotFoundException;
 import model.VideoMetadata;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,9 +22,11 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -57,6 +60,8 @@ class MediaControllerTest {
         ResourceRegion expectedRegion = new ResourceRegion(
                 new InputStreamResource(new ByteArrayInputStream(new byte[0])), 0, 1024);
 
+        when(videoLibraryService.getVideoOrThrow(FILE_ID))
+                .thenReturn(new VideoMetadata(FILE_ID, "Sample", 1024L, "video/mp4", "thumb"));
         when(videoStreamingService.buildStreamingRegion(eq(FILE_ID), isNull())).thenReturn(expectedRegion);
 
         ResponseEntity<ResourceRegion> response = mediaController.streamVideo(FILE_ID, headers);
@@ -73,6 +78,8 @@ class MediaControllerTest {
         ResourceRegion expectedRegion = new ResourceRegion(
                 new InputStreamResource(new ByteArrayInputStream(new byte[0])), 100, 100);
 
+        when(videoLibraryService.getVideoOrThrow(FILE_ID))
+                .thenReturn(new VideoMetadata(FILE_ID, "Sample", 1024L, "video/mp4", "thumb"));
         when(videoStreamingService.buildStreamingRegion(eq(FILE_ID), any(HttpRange.class)))
                 .thenReturn(expectedRegion);
 
@@ -83,6 +90,18 @@ class MediaControllerTest {
         ArgumentCaptor<HttpRange> rangeCaptor = ArgumentCaptor.forClass(HttpRange.class);
         verify(videoStreamingService).buildStreamingRegion(eq(FILE_ID), rangeCaptor.capture());
         assertThat(rangeCaptor.getValue().getRangeStart(1000)).isEqualTo(100);
+    }
+
+    @Test
+    void streamVideoThrowsVideoNotFoundWhenFileIdNotInCacheAndNeverCallsStreamingService() {
+        HttpHeaders headers = new HttpHeaders();
+        when(videoLibraryService.getVideoOrThrow(FILE_ID)).thenThrow(new VideoNotFoundException(FILE_ID));
+
+        assertThatThrownBy(() -> mediaController.streamVideo(FILE_ID, headers))
+                .isInstanceOf(VideoNotFoundException.class)
+                .hasMessageContaining(FILE_ID);
+
+        verify(videoStreamingService, never()).buildStreamingRegion(any(), any());
     }
 
     @Test

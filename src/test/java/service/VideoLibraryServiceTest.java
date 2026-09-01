@@ -1,5 +1,6 @@
 package service;
 
+import exception.VideoNotFoundException;
 import model.VideoMetadata;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,8 +10,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import repository.VideoRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -63,5 +66,24 @@ class VideoLibraryServiceTest {
         List<VideoMetadata> result = videoLibraryService.searchByTitle("nonexistent");
 
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    void getVideoOrThrowReturnsMetadataWhenFileIdExists() {
+        VideoMetadata video = new VideoMetadata("file-3", "Found Video", 4096L, "video/mp4", "thumb-link");
+        when(videoRepository.findById("file-3")).thenReturn(Optional.of(video));
+
+        VideoMetadata result = videoLibraryService.getVideoOrThrow("file-3");
+
+        assertThat(result.getTitle()).isEqualTo("Found Video");
+    }
+
+    @Test
+    void getVideoOrThrowThrowsVideoNotFoundExceptionWhenFileIdMissing() {
+        when(videoRepository.findById("missing-id")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> videoLibraryService.getVideoOrThrow("missing-id"))
+                .isInstanceOf(VideoNotFoundException.class)
+                .hasMessageContaining("missing-id");
     }
 }

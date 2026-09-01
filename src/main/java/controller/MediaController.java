@@ -41,6 +41,7 @@ public class MediaController {
      */
     @GetMapping(value = "/stream/{fileId}", produces = "video/mp4")
     public ResponseEntity<ResourceRegion> streamVideo(@PathVariable String fileId, @RequestHeader HttpHeaders headers) {
+        videoLibraryService.getVideoOrThrow(fileId); // 404s via GlobalExceptionHandler if not in the local cache
         List<HttpRange> ranges = headers.getRange();
         HttpRange requestedRange = ranges.isEmpty() ? null : ranges.get(0);
 

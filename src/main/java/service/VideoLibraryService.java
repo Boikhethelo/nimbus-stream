@@ -1,5 +1,6 @@
 package service;
 
+import exception.VideoNotFoundException;
 import model.VideoMetadata;
 import org.springframework.stereotype.Service;
 import repository.VideoRepository;
@@ -47,6 +48,16 @@ public class VideoLibraryService {
     }
 
 
-
+    /**
+     * Looks up a single video's cached metadata by its file ID.
+     *
+     * @param fileId the cloud-agnostic file ID (S3 key or Drive file ID)
+     * @return the cached metadata for that video
+     * @throws VideoNotFoundException if no video with that ID exists in the local cache
+     */
+    public VideoMetadata getVideoOrThrow(String fileId) {
+        return videoRepository.findById(fileId)
+                .orElseThrow(() -> new VideoNotFoundException(fileId));
+    }
 
 }
