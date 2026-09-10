@@ -90,7 +90,9 @@ class MetadataSyncServiceTest {
 
         syncService.synchronizeCache("container");
 
-        verifyNoMoreInteractions(); // no direct S3Client/Drive interaction possible - none injected
         verify(storageService).listVideoFiles("container");
+        verifyNoMoreInteractions(storageService); // confirms listVideoFiles was the only call made on storageService
+
+
     }
 }
