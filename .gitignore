@@ -46,3 +46,4 @@ stream_cache.db-wal
 *.pem
 remain
 tokens/
+*.mp4

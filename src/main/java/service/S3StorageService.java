@@ -94,13 +94,13 @@ public class S3StorageService implements StorageService {
      * free-tier EC2 instance.
      */
 
-    public URL getPresignedStreamUrl(String fileId, Duration expiry){
-        //generates a temporary signed URL so a client's video player can pull bytes directly from S3, bypassing your EC2 instance entirely. Smart for free-tier cost control.
-        GetObjectRequest getRequest = GetObjectRequest.builder().bucket(bucketName).key(fileId).build();
-        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder().signatureDuration(expiry).getObjectRequest(getRequest).build();
-
-        return s3Presigner.presignGetObject(presignRequest).url();
-    }
+//    public URL getPresignedStreamUrl(String fileId, Duration expiry){
+//        //generates a temporary signed URL so a client's video player can pull bytes directly from S3, bypassing your EC2 instance entirely. Smart for free-tier cost control.
+//        GetObjectRequest getRequest = GetObjectRequest.builder().bucket(bucketName).key(fileId).build();
+//        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder().signatureDuration(expiry).getObjectRequest(getRequest).build();
+//
+//        return s3Presigner.presignGetObject(presignRequest).url();
+//    }
 
 
 }
