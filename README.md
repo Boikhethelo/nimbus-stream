@@ -67,17 +67,6 @@ EC2 — no RDS, ECS/Fargate, or CloudFront.
 - **EC2**: 750 hours/month of `t2.micro` or `t3.micro` (shared across all EC2 usage on the
   account, not per-instance).
 
-To stay within these limits:
-
-- Keep test video files small; the entire library must fit inside 5GB.
-- Stop the EC2 instance when not actively demoing or testing — 750 hours/month is generous
-  but not unlimited if left running continuously alongside other instances.
-- Check the AWS Billing & Cost Management dashboard periodically while building, and set a
-  budget alert (e.g. at $1) as a tripwire.
-- Delete the S3 bucket and terminate the EC2 instance after final submission/grading if the
-  project won't keep running.
-
-The IAM role attached to the EC2 instance should be scoped to only what the app needs:
 
 ```json
 {
@@ -94,6 +83,24 @@ The IAM role attached to the EC2 instance should be scoped to only what the app 
   ]
 }
 ```
+
+## Known issues
+
+- **Streaming fetches the full object on every chunk request.** `S3StorageService.getVideoStream`
+  (and its Google Drive equivalent) issues a full, unranged `GetObject`/`files.get` request every
+  time `VideoStreamingService` asks for a chunk. The 1MB range that's actually needed is sliced
+  out *locally* by Spring's `ResourceRegionHttpMessageConverter` after the whole file has already
+  been downloaded — so the byte savings a "Range" request is supposed to provide never reach the
+  network call to the storage provider.
+
+  In practice this is invisible for the first ~15-20 seconds of playback: the browser aggressively
+  pre-buffers on load, and that initial burst of requests completes fast enough (S3's first-byte
+  latency is low) that nothing looks wrong. Once the pre-buffer is consumed, though, each
+  further chunk request is *also* pulling the entire file, and on a burstable `t2`/`t3.micro`
+  instance the repeated full-object transfers burn through the instance's network burst credit
+  pool — once that's exhausted, throttled bandwidth turns what should be sub-second chunk
+  requests into visible stalls.
+
 
 ## Testing
 
