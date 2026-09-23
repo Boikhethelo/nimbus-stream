@@ -1,0 +1,126 @@
+:root {
+    --sky-top: #ff7f3f;
+    --sky-mid: #ffb347;
+    --sky-bottom: #ffe29a;
+    --cloud-shadow: #dfe9f5;
+    --text-dark: #7a3b12;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 45%, var(--sky-bottom) 100%);
+    overflow-x: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+}
+
+.sky {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.cloud-deco {
+    position: absolute;
+    width: 160px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 50px;
+    filter: blur(1px);
+    animation: drift 28s linear infinite;
+}
+.cloud-deco::before,
+.cloud-deco::after {
+    content: "";
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+}
+.cloud-deco::before { width: 80px; height: 80px; top: -35px; left: 15px; }
+.cloud-deco::after  { width: 60px; height: 60px; top: -25px; right: 20px; }
+
+.cloud-deco--left  { top: 12%; left: -200px; }
+.cloud-deco--right { top: 30%; left: -260px; animation-duration: 36s; animation-delay: -10s; opacity: 0.8; }
+
+@keyframes drift {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(100vw + 300px)); }
+}
+
+.player-wrap {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.title {
+    margin: 0 0 28px;
+    font-size: 2.2rem;
+    color: #fff;
+    text-shadow: 0 0 6px var(--text-dark), 2px 2px 0 var(--text-dark);
+    letter-spacing: 2px;
+}
+
+/* The Nimbus cloud the video "rides" on */
+.nimbus {
+    position: relative;
+    padding: 24px 24px 60px;
+}
+
+.nimbus__puff {
+    position: absolute;
+    background: radial-gradient(circle at 35% 30%, #ffffff, var(--cloud-shadow) 80%);
+    border-radius: 50%;
+    box-shadow: 0 6px 10px rgba(0,0,0,0.1);
+    animation: bob 3.5s ease-in-out infinite;
+}
+
+.nimbus__puff--main {
+    width: 100%;
+    height: 90px;
+    left: 0;
+    bottom: 0;
+    border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+    animation: none;
+}
+
+.nimbus__puff--1 { width: 90px;  height: 90px;  bottom: 10px; left: -20px; }
+.nimbus__puff--2 { width: 130px; height: 110px; bottom: 0;    left: 60px;  animation-delay: 0.4s; }
+.nimbus__puff--3 { width: 130px; height: 110px; bottom: 0;    right: 60px; animation-delay: 0.8s; }
+.nimbus__puff--4 { width: 90px;  height: 90px;  bottom: 10px; right: -20px; animation-delay: 1.2s; }
+
+@keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+}
+
+#player {
+    position: relative;
+    z-index: 2;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+    background: #000;
+    max-width: 100%;
+}
+
+.now-playing {
+    margin-top: 16px;
+    color: #fff;
+    text-shadow: 1px 1px 0 var(--text-dark);
+    font-size: 0.95rem;
+    min-height: 1.2em;
+}
+
+@media (max-width: 700px) {
+    #player { width: 100%; }
+    .nimbus__puff--2, .nimbus__puff--3 { width: 100px; height: 90px; }
+}

@@ -1,7 +1,4 @@
 package controller;
-
-import dto.VideoResponse;
-import mapper.VideoResponseMapper;
 import model.VideoMetadata;
 import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.HttpHeaders;
@@ -28,16 +25,14 @@ public class MediaController {
     private final VideoStreamingService videoStreamingService;
     private final MetadataSyncService metaSyncService;
     private final VideoLibraryService videoLibraryService;
-    private final VideoResponseMapper responseMapper;
 
     public MediaController(VideoStreamingService videoStreamingService,
                            MetadataSyncService metadataSyncService,
-                           VideoLibraryService videoLibraryService,
-                           VideoResponseMapper responseMapper) {
+                           VideoLibraryService videoLibraryService
+                           ) {
         this.videoStreamingService = videoStreamingService;
         this.metaSyncService = metadataSyncService;
         this.videoLibraryService = videoLibraryService;
-        this.responseMapper = responseMapper;
     }
 
     /**
@@ -59,15 +54,15 @@ public class MediaController {
 
     /** Returns the full video library from the local cache. */
     @GetMapping
-    public List<VideoResponse> getAllVideos() {
+    public List<VideoMetadata> getAllVideos() {
 
-        return videoLibraryService.getAllVideos().stream().map(responseMapper::toResponse).toList();
+        return videoLibraryService.getAllVideos();
     }
 
     /** Searches the local cache for videos whose title contains the given text. */
     @GetMapping("/search")
-    public List<VideoResponse> searchVideos(@RequestParam String title) {
-        return videoLibraryService.searchByTitle(title).stream().map(responseMapper::toResponse).toList();
+    public List<VideoMetadata> searchVideos(@RequestParam String title) {
+        return videoLibraryService.searchByTitle(title);
     }
 
     /** Triggers a fresh sync of metadata from the configured cloud provider. */

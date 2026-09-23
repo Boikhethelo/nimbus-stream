@@ -1,10 +1,7 @@
 package controller;
 
-import dto.VideoResponse;
 import exception.VideoNotFoundException;
-import mapper.VideoResponseMapper;
 import model.VideoMetadata;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -56,13 +53,6 @@ class MediaControllerTest {
 
     @InjectMocks
     private MediaController mediaController;
-
-    @BeforeEach
-    void setUp() {
-        mediaController = new MediaController(
-                videoStreamingService, metadataSyncService, videoLibraryService,
-                new VideoResponseMapper());
-    }
 
     @Test
     void streamVideoWithNoRangeHeaderPassesNullRangeToStreamingService() {
@@ -119,10 +109,10 @@ class MediaControllerTest {
         VideoMetadata video = new VideoMetadata("file-1", "Sample", 100L, "video/mp4", "thumb");
         when(videoLibraryService.getAllVideos()).thenReturn(List.of(video));
 
-        List<VideoResponse> result = mediaController.getAllVideos();
+        List<VideoMetadata> result = mediaController.getAllVideos();
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).title()).isEqualTo("Sample");
+        assertThat(result.get(0).getTitle()).isEqualTo("Sample");
         verify(videoLibraryService).getAllVideos();
         verifyNoInteractions(videoStreamingService, metadataSyncService);
     }
@@ -132,10 +122,10 @@ class MediaControllerTest {
         VideoMetadata match = new VideoMetadata("file-2", "Ocean Life", 200L, "video/mp4", "thumb");
         when(videoLibraryService.searchByTitle("ocean")).thenReturn(List.of(match));
 
-        List<VideoResponse> result = mediaController.searchVideos("ocean");
+        List<VideoMetadata> result = mediaController.searchVideos("ocean");
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).title()).isEqualTo("Ocean Life");
+        assertThat(result.get(0).getTitle()).isEqualTo("Ocean Life");
         verify(videoLibraryService).searchByTitle("ocean");
     }
 

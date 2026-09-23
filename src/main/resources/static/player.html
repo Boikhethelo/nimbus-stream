@@ -1,8 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nimbus Stream</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
-<video controls width="640">
-    <source src="http://localhost:8080/api/videos/stream/test/test-film.mp4" type="video/mp4">
-</video>
+<div class="sky">
+    <div class="cloud-deco cloud-deco--left"></div>
+    <div class="cloud-deco cloud-deco--right"></div>
+</div>
+
+<main class="player-wrap">
+    <h1 class="title">Nimbus Stream</h1>
+
+    <div class="nimbus">
+        <div class="nimbus__puff nimbus__puff--1"></div>
+        <div class="nimbus__puff nimbus__puff--2"></div>
+        <div class="nimbus__puff nimbus__puff--3"></div>
+        <div class="nimbus__puff nimbus__puff--4"></div>
+        <div class="nimbus__puff nimbus__puff--main"></div>
+
+        <video id="player" controls width="640">
+            <source id="player-source" src="http://localhost:8080/api/videos/stream/test/test-film.mp4" type="video/mp4">
+            Your browser doesn't support the video tag.
+        </video>
+    </div>
+
+    <p id="now-playing" class="now-playing"></p>
+</main>
+
+<script src="player.js"></script>
 </body>
 </html>
