@@ -112,4 +112,3 @@ required. Run with:
 mvn clean test
 ```
 
-WTC-2RGGX6YK
